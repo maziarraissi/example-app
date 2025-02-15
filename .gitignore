@@ -1,0 +1,9 @@
+db_use_cases/*
+db_use_cases
+db_docs
+db_docs/*
+resources/documentations/images_*
+outputs
+outputs/*
+
+metadata.json
