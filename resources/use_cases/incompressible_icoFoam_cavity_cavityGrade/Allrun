@@ -1,0 +1,27 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1    # Run from this directory
+
+# Source OpenFOAM run functions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+# Map fields consistently from the cavityClipped case
+# Adjust the relative path if necessary.
+echo "Mapping fields (consistent) from ../incompressible_icoFoam_cavity_cavityClipped to $(pwd)"
+mapFields ../incompressible_icoFoam_cavity_cavityClipped -case . -sourceTime latestTime -consistent > log.mapFields 2>&1
+
+echo "Running blockMesh in $(pwd)"
+runApplication blockMesh
+
+echo "Running solver in $(pwd)"
+runApplication $(getApplication)
+
+echo "Converting to VTK"
+runApplication foamToVTK
+
+# Optionally, display the first 50 lines of log files:
+echo "===== Displaying first 50 lines of logs ====="
+find . -type f -name "log*" | while read -r log; do
+    echo "---- $log ----"
+    head -n 50 "$log"
+    echo "--------------------------------------"
+done

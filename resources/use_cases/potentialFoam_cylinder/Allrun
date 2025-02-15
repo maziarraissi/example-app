@@ -1,0 +1,24 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+application=$(getApplication)
+
+runApplication blockMesh
+runApplication $application -functionObjects -writePhi -writep
+runApplication foamPostProcess -func streamFunction
+
+runApplication foamToVTK
+#------------------------------------------------------------------------------
+
+# Display first 50 lines of all log files
+echo "===== Showing first 50 lines of all logs"
+echo "===== Please check for any errors or warnings"
+echo "===== If you need to see more lines, please open the log file directly"
+find . -type f -name "log*" | while read -r log; do
+    echo "---- $log ----"
+    head -n 50 "$log"
+    echo "--------------------------------------"
+done
