@@ -14,7 +14,7 @@ runApplication foamToVTK
 #------------------------------------------------------------------------------
 
 # Display first 50 lines of all log files
-echo "===== Showing first 50 lines of all logs"
+echo "===== Showing first 50 lines of all logs of OpenFOAM"
 echo "===== Please check for any errors or warnings"
 echo "===== If you need to see more lines, please open the log file directly"
 find . -type f -name "log*" | while read -r log; do
