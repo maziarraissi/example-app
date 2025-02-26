@@ -7,8 +7,14 @@ echo "Running script in directory: $SCRIPT_DIR"
 cd "$SCRIPT_DIR" || exit 1    # Ensure script runs from its own directory
 
 # Create a file called test.txt and write "hello world" into it
-echo "hello world" > "$SCRIPT_DIR/test.txt"
-echo "Created test.txt with content: 'hello world'"
+FILE_PATH="$SCRIPT_DIR/test.txt"
+echo "hello world" > "$FILE_PATH"
+echo "Created test.txt at: $FILE_PATH"
+
+# Print the content of the created file
+echo "===== Content of test.txt ====="
+cat "$FILE_PATH"
+echo "================================"
 
 # Source tutorial run functions
 . "$WM_PROJECT_DIR/bin/tools/RunFunctions"
