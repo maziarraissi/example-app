@@ -34,9 +34,19 @@ def simulate():
 
     try:
         proc = subprocess.run(['./Allrun'], cwd=job_path, capture_output=True, text=True, check=True)
+
+        file_path = f"{job_path}/text.txt"
+        # Check if the file exists before reading
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8") as file:
+                content = file.read()
+                content = "File Content: {content}"
+        else:
+            content = f"Error: File '{file_path}' not found."
+        
         output = proc.stdout
     except subprocess.CalledProcessError as e:
-        return jsonify({'error': 'Simulation failed', 'details': e.stderr}), 500
+        return jsonify({'error': 'Simulation failed', 'details': e.stderr, 'content': content}), 500
 
     return jsonify({'success': True, 'output': output})
 
