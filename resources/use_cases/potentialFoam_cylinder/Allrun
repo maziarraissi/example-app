@@ -1,13 +1,18 @@
 #!/bin/sh
-cd ${0%/*} || exit 1    # Run from this directory
+
+# Get and display the current directory of this script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+echo "Running script in directory: $SCRIPT_DIR"
+
+cd "$SCRIPT_DIR" || exit 1    # Ensure script runs from its own directory
 
 # Source tutorial run functions
-. $WM_PROJECT_DIR/bin/tools/RunFunctions
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
 
 application=$(getApplication)
 
 runApplication blockMesh
-runApplication $application -functionObjects -writePhi -writep
+runApplication "$application" -functionObjects -writePhi -writep
 runApplication foamPostProcess -func streamFunction
 
 runApplication foamToVTK
