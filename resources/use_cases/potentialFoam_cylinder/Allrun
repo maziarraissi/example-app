@@ -16,6 +16,12 @@ echo "===== Content of test.txt ====="
 cat "$FILE_PATH"
 echo "================================"
 
+FILE_PATH="$SCRIPT_DIR/Allclean"
+echo "===== Content of Allclean ====="
+cat "$FILE_PATH"
+echo "================================"
+
+
 # Source tutorial run functions
 . "$WM_PROJECT_DIR/bin/tools/RunFunctions"
 
