@@ -6,9 +6,9 @@ echo "Running script in directory: $SCRIPT_DIR"
 
 cd "$SCRIPT_DIR" || exit 1    # Ensure script runs from its own directory
 
-# Create an empty file called test.txt in the script directory
-touch "$SCRIPT_DIR/test.txt"
-echo "Created an empty file: $SCRIPT_DIR/test.txt"
+# Create a file called test.txt and write "hello world" into it
+echo "hello world" > "$SCRIPT_DIR/test.txt"
+echo "Created test.txt with content: 'hello world'"
 
 # Source tutorial run functions
 . "$WM_PROJECT_DIR/bin/tools/RunFunctions"
