@@ -30,7 +30,7 @@ def simulate():
         return jsonify({'error': f'Allrun script not found in {job_path}'}), 400
 
     # Ensure Allrun is executable.
-    make_executable(allrun_path)
+    # make_executable(allrun_path)
 
     try:
         proc = subprocess.run(['./Allrun'], cwd=job_path, capture_output=True, text=True, check=True)
