@@ -48,7 +48,7 @@ def simulate():
     except subprocess.CalledProcessError as e:
         return jsonify({'error': 'Simulation failed', 'details': e.stderr, 'content': content}), 500
 
-    return jsonify({'success': True, 'output': output})
+    return jsonify({'success': True, 'output': output, 'content': content})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
