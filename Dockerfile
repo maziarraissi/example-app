@@ -55,5 +55,8 @@ WORKDIR /home/openfoam/simulation
 # Expose port 5000 for Flask
 EXPOSE 5000
 
+# Switch to the non-root user
+USER openfoam
+
 # Run the Flask app with the OpenFOAM environment
 CMD ["/bin/bash", "-c", "source /opt/openfoam12/etc/bashrc && python3 /opt/microservice.py"]
