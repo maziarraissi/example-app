@@ -1,5 +1,15 @@
 #!/bin/sh
 
+echo "Running inside container..."
+echo "Current directory: $(pwd)"
+echo "User: $(whoami)"
+echo "Attempting to create test.txt..."
+touch test.txt
+ls -l test.txt
+
+touch /home/openfoam/simulation/test.txt
+ls -l /home/openfoam/simulation/test.txt
+
 # Get and display the current directory of this script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 echo "Running script in directory: $SCRIPT_DIR"
