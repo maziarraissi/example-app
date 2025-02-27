@@ -1,11 +1,10 @@
-# Use Ubuntu 24.04 LTS as the base image
+# Use Ubuntu 24.04 LTS as the base image with OpenFOAM 12 setup
 FROM ubuntu:24.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV WM_PROJECT_DIR=/opt/openfoam12
 ENV WM_DIR=/opt/openfoam12/etc/bashrc
-ENV SIM_DIR=/root/OpenFOAM/root-12/run
 
 # Update package lists and install prerequisites
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -13,14 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     gedit \
     bash \
-    python3 \
-    python3-pip \
-    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Add OpenFOAM repository and public key
 RUN bash -c "wget -O - https://dl.openfoam.org/gpg.key > /etc/apt/trusted.gpg.d/openfoam.asc" && \
-    add-apt-repository "deb http://dl.openfoam.org/ubuntu focal main"
+    add-apt-repository "http://dl.openfoam.org/ubuntu"
 
 # Update package lists again and install OpenFOAM 12
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -31,25 +27,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN echo ". /opt/openfoam12/etc/bashrc" >> /root/.bashrc
 RUN echo ". /opt/openfoam12/etc/bashrc" >> /etc/environment
 
-# Create and set the working directory
-WORKDIR /root/OpenFOAM/root-12/run
+# Install Python3, pip, and the virtual environment module
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv && rm -rf /var/lib/apt/lists/*
 
-# Ensure the simulation directory exists and is writable
-RUN mkdir -p /root/OpenFOAM/root-12/run && chmod -R 777 /root/OpenFOAM/root-12/run
+# Create a virtual environment in /opt/venv
+RUN python3 -m venv /opt/venv
 
-# Install Flask and dependencies inside a virtual environment
-RUN python3 -m venv /root/venv
-ENV PATH="/root/venv/bin:$PATH"
-RUN pip install --no-cache-dir flask requests
+# Add the virtual environment to PATH
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy the microservice script into the container
+# Create a non-root user "openfoam" and a simulation directory
+RUN useradd -ms /bin/bash openfoam && \
+    mkdir -p /home/openfoam/simulation && \
+    chown -R openfoam:openfoam /home/openfoam
+
+# Copy the Flask app and requirements, and set permissions
 COPY microservice.py /opt/microservice.py
+COPY requirements.txt /opt/requirements.txt
+RUN chown openfoam:openfoam /opt/microservice.py /opt/requirements.txt
 
-# Expose port 5000 for Flask API
+# Install Python dependencies into the virtual environment
+RUN pip install --no-cache-dir -r /opt/requirements.txt
+
+# Set working directory to the simulation folder (writable by non-root)
+WORKDIR /home/openfoam/simulation
+
+# Expose port 5000 for Flask
 EXPOSE 5000
 
-# Set the entrypoint to ensure sourcing happens in every command
-ENTRYPOINT ["/bin/bash", "-c", "source /opt/openfoam12/etc/bashrc && exec \"$@\"", "--"]
+# Switch to the non-root user "openfoam"
+USER openfoam
 
-# Start the Flask microservice while keeping OpenFOAM environment available
-CMD ["python3", "/opt/microservice.py"]
+# Run the Flask app with the OpenFOAM environment
+CMD ["/bin/bash", "-c", "source /opt/openfoam12/etc/bashrc && python3 /opt/microservice.py"]
