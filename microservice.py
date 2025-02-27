@@ -43,12 +43,12 @@ def simulate():
                 content = "File Content: {content}"
         else:
             content = f"Error: File '{file_path}' not found."
-        
+        files_in_sim_dir = os.listdir(SIM_DIR)
         output = proc.stdout
     except subprocess.CalledProcessError as e:
         return jsonify({'error': 'Simulation failed', 'details': e.stderr, 'content': content}), 500
 
-    return jsonify({'success': True, 'output': output, 'content': content, 'sim_dir': SIM_DIR, 'job_path': job_path})
+    return jsonify({'success': True, 'output': output, 'content': content, 'sim_dir': SIM_DIR, 'job_path': job_path, 'files_in_sim_dir': files_in_sim_dir})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
