@@ -22,7 +22,7 @@ echo "hello world" > "$FILE_PATH"
 echo "Created test.txt at: $FILE_PATH"
 
 # Print the content of the created file
-echo "===== Content of test.txt ======"
+echo "===== Content of test.txt ====="
 cat "$FILE_PATH"
 echo "================================"
 
